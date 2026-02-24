@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CAMILA BARBON</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik+Glitch&display=swap" rel="stylesheet">
+
+<style>
+  body { margin: 0; overflow: hidden; }
+
+  .rubik-glitch-regular {
+    font-family: "Rubik Glitch", system-ui;
+    font-weight: 400;
+    font-style: normal;
+  }
+
+  header {
+    height: 80px;
+    backdrop-filter: blur(6px);
+    background: rgba(255,255,255,0.15);
+  }
+
+.panel {
+  flex: 1;
+  position: relative;
+  cursor: pointer;
+  overflow: visible;
+}
+
+  .bg-layer {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: opacity 0.6s ease;
+    z-index: 0;
+  }
+
+  .panel::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.35);
+    z-index: 1;
+  }
+
+.panel-text {
+  position: absolute;
+  left: 8%;
+  top: 50%;
+  transform: translateY(80%);
+  z-index: 5;
+
+  color: white;
+  font-size: clamp(3rem, 8vw, 8rem);
+  line-height: 0.9;
+  letter-spacing: 0.05em;
+}
+
+.slide-in {
+  animation: slideIn 0.6s cubic-bezier(.7,0,.3,1);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translate(-60px, 80%);
+    opacity: 0;
+  }
+  to {
+    transform: translate(60, 80%);
+    opacity: 1;
+  }
+}
+</style>
+</head>
+
+<body class="font-sans bg-white text-black">
+
+<!-- NAV -->
+<header class="fixed top-0 left-0 w-full h-[80px] flex items-center justify-between px-8 z-50 bg-transparent">
+
+  <div class="tracking-wide text-white rubik-glitch-regular text-3xl px-[6%]">
+  CAMILA BARBON  |  ARTE MULTIMEDIAL
+  </div>
+
+  <nav class="flex gap-8 text-sm text-white rubik-glitch-regular text-3xl">
+    <a href="#" class="hover:opacity-60 transition">Work</a>
+    <a href="#" class="hover:opacity-60 transition">Bio</a>
+    <a href="#" class="hover:opacity-60 transition">CV</a>
+    <a href="#" class="hover:opacity-60 transition">Contact</a>
+  </nav>
+
+</header>
+
+<!-- PANELS -->
+<main class="absolute inset-0 flex flex-col">
+  <div id="panels" class="flex flex-col h-full"></div>
+</main>
+
+<script>
+
+//
+// CONFIGURACIÓN
+//
+
+const tatuImages = Array.from({length: 10}, (_, i) => `img/tatu${i+1}.jpg`);
+const dibuImages = Array.from({length: 11}, (_, i) => `img/dibu${i+1}.jpg`);
+const fotoImages = Array.from({length: 9}, (_, i) => `img/foto${i+1}.jpg`);
+
+const panelConfig = [
+  { 
+    states: [" ", "", "Fotografía",  "", " ", "Imagen" ],
+    images: tatuImages
+  },
+  { 
+    states: [" ","Diseño", " ", " ", "Medios", " ", "Desarrollo ",],
+    images: dibuImages
+  },
+  { 
+    states: ["", "" , ""],
+    images: fotoImages
+  }
+];
+
+//
+// GLITCH TV INTERFERENCE
+//
+
+function triggerGlitch(imageUrl) {
+  const bands = Math.floor(Math.random() * 8) + 6; // cantidad original
+
+  for (let i = 0; i < bands; i++) {
+    const band = document.createElement("div");
+    const height = Math.random() * 120 + 40;
+    const top = Math.random() * (window.innerHeight - height);
+    const shift = (Math.random() - 0.5) * 600;
+
+    band.style.position = "fixed";
+    band.style.left = "0";
+    band.style.top = top + "px";
+    band.style.width = "100vw";
+    band.style.height = height + "px";
+    band.style.zIndex = "9999";
+    band.style.pointerEvents = "none";
+    band.style.overflow = "hidden";
+
+    const img = document.createElement("img");
+    img.src = imageUrl;
+    img.style.position = "absolute";
+    img.style.left = "0";
+    img.style.top = `-${top}px`;
+    img.style.width = "100vw";
+    img.style.height = "100vh";
+    img.style.objectFit = "cover";
+
+    img.style.filter = `
+      invert(${Math.random() > 0.5 ? 1 : 0})
+      contrast(${Math.random() * 3 + 1})
+      hue-rotate(${Math.random() * 360}deg)
+      saturate(${Math.random() * 3 + 1})
+    `;
+    img.style.transform = `translateX(${shift}px)`;
+
+    band.appendChild(img);
+    document.body.appendChild(band);
+
+    // Desvanecimiento parcial y heterogéneo
+    const fadeSteps = 5;
+    for (let s = 0; s < fadeSteps; s++) {
+      setTimeout(() => {
+        const partialOpacity = Math.random() * 0.5 + 0.3; // 0.3 a 0.8
+        img.style.opacity = partialOpacity;
+        img.style.transform = `translateX(${shift * (0.8 + Math.random() * 0.4 - 0.2)}px)`; // ligero movimiento extra
+      }, 50 * s);
+    }
+
+    setTimeout(() => band.remove(), 300 + Math.random() * 200); // duración aleatoria
+  }
+}
+
+function generateNoise(width, height) {
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+  const ctx = canvas.getContext("2d");
+  
+  const imageData = ctx.createImageData(width, height);
+  for (let i = 0; i < imageData.data.length; i += 4) {
+    const val = Math.random() * 255;
+    imageData.data[i] = val;
+    imageData.data[i+1] = val;
+    imageData.data[i+2] = val;
+    imageData.data[i+3] = 20; // opacidad baja
+  }
+  ctx.putImageData(imageData, 0, 0);
+  return canvas.toDataURL();
+}
+
+//
+// PANEL CLASS
+//
+
+class Panel {
+
+  constructor({ states, images }) {
+    this.states = states;
+    this.images = images;
+    this.index = 0;
+  }
+
+  next() {
+
+    this.index = (this.index + 1) % this.images.length;
+    const currentImage = this.images[this.index];
+
+    triggerGlitch(currentImage);
+
+   this.textEl.innerText =
+  this.states[this.index % this.states.length];
+
+this.textWrapper.classList.remove("slide-in");
+void this.textWrapper.offsetWidth;
+this.textWrapper.classList.add("slide-in");
+
+    this.bgLayer.style.backgroundImage =
+      `url(${currentImage})`;
+  }
+
+render() {
+
+  this.el = document.createElement("div");
+  this.el.className = "panel";
+
+  // Background primero
+  this.bgLayer = document.createElement("div");
+  this.bgLayer.className = "bg-layer";
+  this.bgLayer.style.backgroundImage =
+    `url(${this.images[this.index]})`;
+
+  this.el.appendChild(this.bgLayer);
+
+  // Wrapper del texto
+  this.textWrapper = document.createElement("div");
+  this.textWrapper.className = "panel-text";
+
+  this.textEl = document.createElement("div");
+  this.textEl.className = "rubik-glitch-regular";
+  this.textEl.innerText = this.states[this.index];
+
+  this.textWrapper.appendChild(this.textEl);
+  this.el.appendChild(this.textWrapper);
+
+
+  return this.el;
+}
+}
+
+//
+// INIT
+//
+
+const container = document.getElementById("panels");
+
+// 🔥 Limpia antes de renderizar
+container.innerHTML = "";
+
+const panels = [];
+
+panelConfig.forEach(config => {
+  const panel = new Panel(config);
+  panels.push(panel);
+  container.appendChild(panel.render());
+});
+window.onwheel = null;
+
+window.addEventListener("wheel", (e) => {
+
+  if (e.deltaY > 0) {
+    panels.forEach(panel => panel.next());
+  }
+
+});
+// Interacción por click para miniatura independiente
+const allImages = panels.flatMap(panel => panel.images); // todas las imágenes de todos los módulos
+
+panels.forEach(panel => {
+
+  let previewImg;
+
+  panel.el.addEventListener("mouseenter", () => {
+    if (!previewImg) {
+      previewImg = document.createElement("img");
+      previewImg.style.position = "absolute";
+      previewImg.style.width = "300px";
+      previewImg.style.height = "auto";
+      previewImg.style.border = "2px solid white";
+      previewImg.style.borderRadius = "4px";
+      previewImg.style.pointerEvents = "none";
+      previewImg.style.zIndex = "9999";
+      previewImg.style.transition = "transform 0.05s ease, opacity 0.2s ease";
+      panel.el.appendChild(previewImg);
+    }
+    // Imagen inicial aleatoria de todas
+    const randomIndex = Math.floor(Math.random() * allImages.length);
+    previewImg.src = allImages[randomIndex];
+    previewImg.style.display = "block";
+  });
+
+  panel.el.addEventListener("mousemove", (e) => {
+    if (previewImg) {
+      const rect = panel.el.getBoundingClientRect();
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      const imgWidth = 100;
+      const imgHeight = previewImg.naturalHeight / previewImg.naturalWidth * imgWidth;
+
+      let offsetX = e.clientX - rect.left + 15; // derecha del cursor
+      let offsetY;
+
+      // Si el mouse está en la parte baja de la pantalla, colocamos la miniatura arriba del cursor
+      if (e.clientY + imgHeight + 15 > viewportHeight) {
+        offsetY = e.clientY - rect.top - imgHeight - 15; // arriba del cursor
+      } else {
+        offsetY = e.clientY - rect.top + 15; // debajo del cursor
+      }
+
+      // Ajuste horizontal para que no se salga del viewport
+      if (e.clientX + imgWidth + 15 > viewportWidth) {
+        offsetX -= (e.clientX + imgWidth + 15 - viewportWidth);
+      }
+
+      previewImg.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+    }
+  });
+
+  panel.el.addEventListener("mouseleave", () => {
+    if (previewImg) previewImg.style.display = "none";
+  });
+
+  panel.el.addEventListener("click", () => {
+    if (previewImg) {
+      const randomIndex = Math.floor(Math.random() * allImages.length);
+      previewImg.src = allImages[randomIndex];
+    }
+  });
+
+});
+</script>
+
+</body>
+</html>
