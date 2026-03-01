@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Rubik+Glitch&display=swap" rel="stylesheet">
 
 <style>
+  html { font-family: "Segoe UI", system-ui, -apple-system, sans-serif;}
   body { margin: 0; overflow: hidden; }
   .site-title {
   position: fixed;
@@ -100,7 +101,10 @@
 .state-enter {
   animation: stateEnter 0.9s cubic-bezier(.22,.8,.2,1);
 }
-
+.modal-link {
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
 @keyframes stateEnter {
   0% {
     transform: translateX(120vw) translateY(80%);
@@ -215,8 +219,7 @@ font-size: clamp(1rem, 3vw, 2rem);
   background: rgba(0,0,0,0.6);
 }
 .modal-classic {
-  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
-  font-weight: 400;
+  font-weight: 800;
   letter-spacing: 0.02em;
 }
 .modal-close {
@@ -401,7 +404,7 @@ font-size: clamp(1rem, 3vw, 2rem);
 </style>
 </head>
 
-<body class="font-sans bg-white text-black">
+<body class="bg-white text-black">
 
 <!-- NAV -->
 <header class="fixed top-0 left-0 w-full h-[80px] flex items-center justify-between px-8 z-[3000] bg-transparent">
@@ -955,7 +958,10 @@ const modalClose = document.getElementById("modalClose");
 const modalContentData = {
   TATUANDO: `
     <h2 class="text-5xl mb-6 rubik-glitch-regular tracking-wide" >TATUANDO</h2>
-    <p>Tatuajes en línea negra, sólidos y originales, desde 2021. Conocé mis tatuajes en instagram: @camitatuando</p>
+    <p>Tatuajes en línea negra, sólidos y originales, desde 2021.  Conocé mis trabajos en
+    <a href="https://instagram.com/camitatuando" target="_blank" class="modal-link">
+      @camitatuando
+    </a></p>
   `,
   BIO: `
     <h2 class="text-5xl mb-6 rubik-glitch-regular tracking-wide">BIO</h2>
@@ -963,11 +969,15 @@ const modalContentData = {
   `,
   CV: `
     <h2 class="text-5xl mb-6 rubik-glitch-regular tracking-wide">CV</h2>
-    <p>Producción audiovisual, comunicación digital y desarrollo web. Contratame! CV aquí</p>
+    <p>Producción audiovisual, comunicación digital y desarrollo web. 
+    <br>¡Contratame!
+    <a href="./img/camila-barbon-cv.pdf" target="_blank" class="modal-link">
+      Descargar CV
+    </a></p>
   `,
   CONTACTO: `
     <h2 class=" text-5xl mb-6 rubik-glitch-regular tracking-wide">CONTACTO</h2>
-    <p>camibarbon@gmail.com<br>Celu: 1130933666</p>
+    <p>camibarbon@gmail.com<br>+54 11 30933666</p>
   `
 };
 
