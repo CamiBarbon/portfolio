@@ -284,9 +284,8 @@ font-size: clamp(1rem, 3vw, 2rem);
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-end;
   gap: 25px;
-
   background: transparent;
   backdrop-filter: none;
 
@@ -304,6 +303,7 @@ font-size: clamp(1rem, 3vw, 2rem);
   color: white;
   font-family: "Rubik Glitch", system-ui;
   font-size: 2rem;
+  padding-right: 2rem;
 }
 
 /* MOBILE NAV */
@@ -413,16 +413,16 @@ font-size: clamp(1rem, 3vw, 2rem);
   ☰
 </button>
 <nav id="mainNav" class="hidden md:flex gap-10 text-white rubik-glitch-regular text-4xl tracking-wide">
-<a class="menu-item" data-key="BIO">BIO</a>
-<a class="menu-item" data-key="CV">CV</a>
+<a class="menu-item" data-key="BIO">SOBRE MI</a>
+<a class="menu-item" data-key="CV">MI CV</a>
 <a class="menu-item" data-key="TATUANDO">TATUANDO</a>
 <a class="menu-item" data-key="CONTACTO">CONTACTO</a>
 </nav>
 <div id="mobileMenu" class="mobile-menu md:hidden">
-<a href="#" class="mobile-item" data-key="BIO">BIO</a>
-<a href="#" class="mobile-item" data-key="CV">CV</a>
-<a href="#" class="mobile-item" data-key="TATUANDO">TATUS</a>
-<a href="#" class="mobile-item" data-key="CONTACTO">✉</a>
+<a href="#" class="mobile-item" data-key="BIO">SOBRE MI</a>
+<a href="#" class="mobile-item" data-key="CV">MI CV</a>
+<a href="#" class="mobile-item" data-key="TATUANDO">TATUANDO</a>
+<a href="#" class="mobile-item" data-key="CONTACTO">CONTACTO</a>
 </div>
 </header>
 
@@ -954,8 +954,8 @@ const modalClose = document.getElementById("modalClose");
 
 const modalContentData = {
   TATUANDO: `
-    <h2 class="text-5xl mb-6 rubik-glitch-regular tracking-wide" >CAMITATUANDO</h2>
-    <p>Tatuajes en línea negra, sólidos y originales, desde 2021 en @camitatuando</p>
+    <h2 class="text-5xl mb-6 rubik-glitch-regular tracking-wide" >TATUANDO</h2>
+    <p>Tatuajes en línea negra, sólidos y originales, desde 2021. Conocé mis tatuajes en instagram: @camitatuando</p>
   `,
   BIO: `
     <h2 class="text-5xl mb-6 rubik-glitch-regular tracking-wide">BIO</h2>
