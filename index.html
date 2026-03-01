@@ -11,7 +11,43 @@
 
 <style>
   body { margin: 0; overflow: hidden; }
+  .site-title {
+  position: fixed;
+  bottom: -10px;
+  left: 30px;
+  font-size: clamp(6rem, 18vw, 18rem);
+  line-height: 0.8;
+  color: white;
+  opacity: 0.08;
+  z-index: 1000;
+  pointer-events: none;
+  letter-spacing: 0.05em;
+  }
+  .menu-item {
+  position: relative;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
 
+.menu-item:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+.menu-item::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 0;
+  width: 0%;
+  height: 2px;
+  background: white;
+  transition: width 0.3s ease;
+}
+
+.menu-item:hover::after {
+  width: 100%;
+}
   .rubik-glitch-regular {
     font-family: "Rubik Glitch", system-ui;
     font-weight: 400;
@@ -61,19 +97,306 @@
   letter-spacing: 0.05em;
 }
 
-.slide-in {
-  animation: slideIn 0.6s cubic-bezier(.7,0,.3,1);
+.state-enter {
+  animation: stateEnter 0.9s cubic-bezier(.22,.8,.2,1);
 }
 
-@keyframes slideIn {
-  from {
-    transform: translate(-60px, 80%);
+@keyframes stateEnter {
+  0% {
+    transform: translateX(120vw) translateY(80%);
     opacity: 0;
   }
-  to {
-    transform: translate(60, 80%);
+  60% {
+    transform: translateX(-20px) translateY(80%);
     opacity: 1;
   }
+  100% {
+    transform: translateX(0) translateY(80%);
+    opacity: 1;
+  }
+}
+.modal-overlay {
+  position: fixed;
+  top: 100px;
+  bottom: 100px;
+  left: 100px;
+  right: 100px;
+  border-radius: 2rem;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 2000;
+  overflow: hidden;
+}
+.modal-content {
+  position: relative;
+  width: min(900px, 90%);
+  max-height: 80vh;
+  color: white;
+  padding: 0;
+}
+
+.modal-slice {
+  overflow: hidden;
+  position: relative;
+}
+.modal-active .panel-text {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-line.rubik-glitch-regular {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+}
+.modal-line {
+font-size: clamp(1rem, 3vw, 2rem);
+  line-height: 1.6;
+  opacity: 0;
+  position: relative;
+}
+
+.slice-enter {
+  animation: glitchIn 0.7s steps(8) forwards;
+}
+
+@keyframes glitchIn {
+
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+    filter: blur(4px) contrast(2);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translateY(-10px);
+    filter: blur(2px) contrast(3);
+  }
+
+  40% {
+    transform: translateY(6px);
+    filter: blur(1px) hue-rotate(20deg);
+  }
+
+  60% {
+    transform: translateY(-3px);
+    filter: contrast(2) hue-rotate(-20deg);
+  }
+
+  80% {
+    transform: translateY(2px);
+    filter: none;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+    filter: none;
+  }
+}
+
+@keyframes sliceEnter {
+  0% {
+    transform: translateX(var(--offset));
+    opacity: 0;
+  }
+  60% {
+    transform: translateX(-10px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.modal-active .panel::after {
+  background: rgba(0,0,0,0.6);
+}
+.modal-classic {
+  font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.modal-close {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  font-size: 3rem;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  z-index: 10;
+}
+
+.modal-close:hover {
+  transform: rotate(90deg);
+}
+.modal-active .panel {
+  transform: scale(1.03); /* ya arranca ampliado */
+  animation: subtleDrift 6s ease-in-out infinite alternate;
+}
+
+@keyframes subtleDrift {
+  from { transform: scale(1.05); }
+  to   { transform: scale(1.08); }
+}
+.hidden {
+  display: none;
+}
+.modal-glitch-wrapper {
+  position: relative;
+  width: min(900px, 90%);
+  margin: auto;
+  padding: 100px 40px;
+}
+.scroll-indicator {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%) rotate(-90deg);
+  font-size: clamp(5rem, 9vw, 9rem);
+  color: white;
+  opacity: 0.85;
+  z-index: 1500;
+  pointer-events: none;
+  line-height: 1;
+
+  animation: bounceArrow 1.4s ease-in-out infinite;
+  transition: opacity 0.4s ease;
+}
+/* cuando hay modal */
+.modal-active .scroll-indicator {
+  opacity: 0.2;
+}
+
+@keyframes bounceArrow {
+
+  0%   { transform: translate(-50%, 0) rotate(-90deg); }
+  50%  { transform: translate(-50%, -18px) rotate(-90deg); }
+  100% { transform: translate(-50%, 0) rotate(-90deg); }
+
+}
+.mobile-menu {
+  position: fixed;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+
+  background: transparent;
+  backdrop-filter: none;
+
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(.22,.8,.2,1);
+  z-index: 3500;
+}
+
+.mobile-menu.active {
+  max-height: 400px;
+}
+
+.mobile-item {
+  color: white;
+  font-family: "Rubik Glitch", system-ui;
+  font-size: 2rem;
+}
+
+/* MOBILE NAV */
+@media (max-width: 768px) {
+  header {
+    justify-content: space-between;
+  }
+.modal-active .panel {
+  transform: scale(1.03); /* ya arranca ampliado */
+  animation: subtleDrift 6s ease-in-out infinite alternate;
+}
+.modal-content {
+    width: calc(100vw - 40px);
+    height: auto;
+    max-height: 85vh;
+    padding: 40px 25px;
+  }
+
+  .modal-close {
+    top: 15px;
+    right: 15px;
+    font-size: 2.2rem;
+  }
+@keyframes subtleDrift {
+  from { transform: scale(1.03); }
+  to   { transform: scale(1.06); }
+}
+.modal-overlay {
+    top: 40px;
+    bottom: 40px;
+    left: 20px;
+    right: 20px;
+  }
+
+  .modal-content {
+    width: 100%;
+    max-height: 85vh;
+  }
+
+  .modal-line {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .modal-line.rubik-glitch-regular {
+    font-size: 1.6rem;
+  }
+  @media (min-width: 768px) {
+
+  .menu-item {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    transition: letter-spacing 0.2s ease;
+  }
+
+  .menu-item::before,
+  .menu-item::after {
+    content: attr(data-text);
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .menu-item::before {
+    color: red;
+    transform: translateX(-2px);
+  }
+
+  .menu-item::after {
+    color: cyan;
+    transform: translateX(2px);
+  }
+
+  .menu-item:hover {
+    letter-spacing: 0.08em;
+  }
+
+  .menu-item:hover::before,
+  .menu-item:hover::after {
+    opacity: 0.7;
+    animation: navRGBGlitch 0.18s infinite alternate;
+  }
+
+}
+
+@keyframes navRGBGlitch {
+  0%   { transform: translateX(-2px); }
+  50%  { transform: translateX(2px); }
+  100% { transform: translateX(-1px); }
+}
 }
 </style>
 </head>
@@ -81,274 +404,660 @@
 <body class="font-sans bg-white text-black">
 
 <!-- NAV -->
-<header class="fixed top-0 left-0 w-full h-[80px] flex items-center justify-between px-8 z-50 bg-transparent">
+<header class="fixed top-0 left-0 w-full h-[80px] flex items-center justify-between px-8 z-[3000] bg-transparent">
 
-  <div class="tracking-wide text-white rubik-glitch-regular text-3xl px-[6%]">
-  CAMILA BARBON  |  ARTE MULTIMEDIAL
+  <div class="tracking-wide text-white rubik-glitch-regular text-2xl md:text-4xl px-[6%]">
+   <a href="index.html">CAMILA BARBON</a>  
   </div>
-
-  <nav class="flex gap-8 text-sm text-white rubik-glitch-regular text-3xl">
-    <a href="#" class="hover:opacity-60 transition">Work</a>
-    <a href="#" class="hover:opacity-60 transition">Bio</a>
-    <a href="#" class="hover:opacity-60 transition">CV</a>
-    <a href="#" class="hover:opacity-60 transition">Contact</a>
-  </nav>
-
+<button id="menuToggle" class="md:hidden text-white text-4xl z-[4000]">
+  ☰
+</button>
+<nav id="mainNav" class="hidden md:flex gap-10 text-white rubik-glitch-regular text-4xl tracking-wide">
+<a class="menu-item" data-key="BIO">BIO</a>
+<a class="menu-item" data-key="CV">CV</a>
+<a class="menu-item" data-key="TATUANDO">TATUANDO</a>
+<a class="menu-item" data-key="CONTACTO">CONTACTO</a>
+</nav>
+<div id="mobileMenu" class="mobile-menu md:hidden">
+<a href="#" class="mobile-item" data-key="BIO">BIO</a>
+<a href="#" class="mobile-item" data-key="CV">CV</a>
+<a href="#" class="mobile-item" data-key="TATUANDO">TATUS</a>
+<a href="#" class="mobile-item" data-key="CONTACTO">✉</a>
+</div>
 </header>
 
 <!-- PANELS -->
 <main class="absolute inset-0 flex flex-col">
   <div id="panels" class="flex flex-col h-full"></div>
 </main>
-
+<!-- MODAL -->
+<div id="modalOverlay" class="modal-overlay hidden">
+  <div class="modal-content">
+    <button id="modalClose" class="modal-close">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+<div class="scroll-indicator rubik-glitch-regular">
+  &lt;
+</div>
 <script>
 
-//
-// CONFIGURACIÓN
-//
+// ==============================
+// CONFIG
+// ==============================
 
 const tatuImages = Array.from({length: 10}, (_, i) => `img/tatu${i+1}.jpg`);
 const dibuImages = Array.from({length: 11}, (_, i) => `img/dibu${i+1}.jpg`);
 const fotoImages = Array.from({length: 9}, (_, i) => `img/foto${i+1}.jpg`);
 
-const panelConfig = [
-  { 
-    states: [" ", "", "Fotografía",  "", " ", "Imagen" ],
-    images: tatuImages
-  },
-  { 
-    states: [" ","Diseño", " ", " ", "Medios", " ", "Desarrollo ",],
-    images: dibuImages
-  },
-  { 
-    states: ["", "" , ""],
-    images: fotoImages
-  }
-];
 
-//
-// GLITCH TV INTERFERENCE
-//
+const panelConfig = [
+  { states: [" ", "", "Arte", "", " "," ", "Imagen"," "] },
+  { states: [" ", "Diseño", " ", " ", "Multimedia", " ", "Desarrollo"] },
+  { states: ["", "", ""] }
+];
+document.querySelectorAll(".menu-item").forEach(el => {
+  el.setAttribute("data-text", el.innerText);
+});
+// ==============================
+// GLITCH SUAVE (no invade menú)
+// ==============================
 
 function triggerGlitch(imageUrl) {
-  const bands = Math.floor(Math.random() * 8) + 6; // cantidad original
 
-  for (let i = 0; i < bands; i++) {
-    const band = document.createElement("div");
-    const height = Math.random() * 120 + 40;
-    const top = Math.random() * (window.innerHeight - height);
-    const shift = (Math.random() - 0.5) * 600;
+  const glitchContainer = document.createElement("div");
+  glitchContainer.style.position = "fixed";
+  glitchContainer.style.inset = "0";
+  glitchContainer.style.pointerEvents = "none";
+  glitchContainer.style.zIndex = "4";
+  glitchContainer.style.overflow = "hidden";
 
-    band.style.position = "fixed";
-    band.style.left = "0";
-    band.style.top = top + "px";
-    band.style.width = "100vw";
-    band.style.height = height + "px";
-    band.style.zIndex = "9999";
-    band.style.pointerEvents = "none";
-    band.style.overflow = "hidden";
+  const mode = Math.floor(Math.random() * 4); 
+  // 0 = negativo
+  // 1 = RGB split fuerte
+  // 2 = tele vieja (scanline + contraste)
+  // 3 = distorsión brutal horizontal
 
-    const img = document.createElement("img");
-    img.src = imageUrl;
-    img.style.position = "absolute";
-    img.style.left = "0";
-    img.style.top = `-${top}px`;
-    img.style.width = "100vw";
-    img.style.height = "100vh";
-    img.style.objectFit = "cover";
+  const slices = 12 + Math.floor(Math.random() * 10);
+  const sliceHeight = window.innerHeight / slices;
 
-    img.style.filter = `
-      invert(${Math.random() > 0.5 ? 1 : 0})
-      contrast(${Math.random() * 3 + 1})
-      hue-rotate(${Math.random() * 360}deg)
-      saturate(${Math.random() * 3 + 1})
-    `;
-    img.style.transform = `translateX(${shift}px)`;
+  for (let i = 0; i < slices; i++) {
 
-    band.appendChild(img);
-    document.body.appendChild(band);
+    const slice = document.createElement("div");
+    slice.style.position = "absolute";
+    slice.style.left = "0";
+    slice.style.top = `${i * sliceHeight}px`;
+    slice.style.width = "100%";
+    slice.style.height = `${sliceHeight + 2}px`;
+    slice.style.overflow = "hidden";
 
-    // Desvanecimiento parcial y heterogéneo
-    const fadeSteps = 5;
-    for (let s = 0; s < fadeSteps; s++) {
-      setTimeout(() => {
-        const partialOpacity = Math.random() * 0.5 + 0.3; // 0.3 a 0.8
-        img.style.opacity = partialOpacity;
-        img.style.transform = `translateX(${shift * (0.8 + Math.random() * 0.4 - 0.2)}px)`; // ligero movimiento extra
-      }, 50 * s);
+    const layer = document.createElement("div");
+    layer.style.position = "absolute";
+    layer.style.left = "0";
+    layer.style.top = `-${i * sliceHeight}px`;
+    layer.style.width = "100%";
+    layer.style.height = "100vh";
+    layer.style.backgroundImage = `url(${imageUrl})`;
+    layer.style.backgroundSize = "cover";
+    layer.style.backgroundPosition = "center";
+
+    let offset = (Math.random() - 0.5) * 80;
+
+    // ===== MODOS VISUALES =====
+
+    if (mode === 0) {
+      // NEGATIVO
+      layer.style.filter = `
+        invert(1)
+        contrast(1.4)
+        brightness(1.2)
+      `;
     }
 
-    setTimeout(() => band.remove(), 300 + Math.random() * 200); // duración aleatoria
+    if (mode === 1) {
+      // RGB SPLIT FUERTE
+      layer.style.filter = `
+        contrast(1.3)
+        hue-rotate(${Math.random()*360}deg)
+      `;
+      layer.style.mixBlendMode = "screen";
+    }
+
+    if (mode === 2) {
+      // TELE VIEJA
+      layer.style.filter = `
+        grayscale(0.4)
+        contrast(1.8)
+        brightness(0.9)
+      `;
+    }
+
+    if (mode === 3) {
+      // DISTORSIÓN HORIZONTAL
+      layer.style.filter = `
+        contrast(1.6)
+        saturate(0.6)
+      `;
+      offset *= 1.5;
+    }
+
+    layer.style.transform = `translateX(${offset}px)`;
+
+    slice.appendChild(layer);
+    glitchContainer.appendChild(slice);
+
+    setTimeout(() => {
+      layer.style.transform = `translateX(${(Math.random() - 0.5) * 40}px)`;
+      layer.style.opacity = Math.random() * 0.8 + 0.2;
+    }, 40 + i * 10);
+
+    setTimeout(() => {
+      slice.style.opacity = "0";
+    }, 200 + i * 20);
   }
+
+  // ===== SCANLINE CRT (solo algunos modos) =====
+  if (mode === 2 || Math.random() > 0.6) {
+    const noise = document.createElement("div");
+    noise.style.position = "absolute";
+    noise.style.inset = "0";
+    noise.style.background =
+      "repeating-linear-gradient(to bottom, rgba(255,255,255,0.05) 0px, rgba(0,0,0,0.1) 2px)";
+    noise.style.mixBlendMode = "overlay";
+    glitchContainer.appendChild(noise);
+  }
+
+  document.body.appendChild(glitchContainer);
+
+  setTimeout(() => {
+    glitchContainer.remove();
+  }, 500);
 }
 
-function generateNoise(width, height) {
-  const canvas = document.createElement("canvas");
-  canvas.width = width;
-  canvas.height = height;
-  const ctx = canvas.getContext("2d");
-  
-  const imageData = ctx.createImageData(width, height);
-  for (let i = 0; i < imageData.data.length; i += 4) {
-    const val = Math.random() * 255;
-    imageData.data[i] = val;
-    imageData.data[i+1] = val;
-    imageData.data[i+2] = val;
-    imageData.data[i+3] = 20; // opacidad baja
-  }
-  ctx.putImageData(imageData, 0, 0);
-  return canvas.toDataURL();
-}
-
-//
+// ==============================
 // PANEL CLASS
-//
+// ==============================
 
 class Panel {
 
-  constructor({ states, images }) {
+  constructor(states, positionIndex) {
     this.states = states;
-    this.images = images;
     this.index = 0;
+    this.positionIndex = positionIndex;
+  }
+
+  render() {
+
+    this.el = document.createElement("div");
+    this.el.className = "panel";
+
+    this.bgLayer = document.createElement("div");
+    this.bgLayer.className = "bg-layer";
+
+    if (this.positionIndex === 0)
+      this.bgLayer.style.backgroundPosition = "top center";
+
+    if (this.positionIndex === 2)
+      this.bgLayer.style.backgroundPosition = "bottom center";
+
+    this.el.appendChild(this.bgLayer);
+
+    this.textWrapper = document.createElement("div");
+    this.textWrapper.className = "panel-text";
+
+    this.textEl = document.createElement("div");
+    this.textEl.className = "rubik-glitch-regular";
+
+    this.textWrapper.appendChild(this.textEl);
+    this.el.appendChild(this.textWrapper);
+
+    return this.el;
   }
 
   next() {
-
-    this.index = (this.index + 1) % this.images.length;
-    const currentImage = this.images[this.index];
-
-    triggerGlitch(currentImage);
-
-   this.textEl.innerText =
-  this.states[this.index % this.states.length];
-
-this.textWrapper.classList.remove("slide-in");
-void this.textWrapper.offsetWidth;
-this.textWrapper.classList.add("slide-in");
-
-    this.bgLayer.style.backgroundImage =
-      `url(${currentImage})`;
+    this.index = (this.index + 1) % this.states.length;
+    return this.states[this.index] || "";
   }
 
-render() {
+ setState(text) {
 
-  this.el = document.createElement("div");
-  this.el.className = "panel";
+  this.textEl.innerText = text;
 
-  // Background primero
-  this.bgLayer = document.createElement("div");
-  this.bgLayer.className = "bg-layer";
-  this.bgLayer.style.backgroundImage =
-    `url(${this.images[this.index]})`;
-
-  this.el.appendChild(this.bgLayer);
-
-  // Wrapper del texto
-  this.textWrapper = document.createElement("div");
-  this.textWrapper.className = "panel-text";
-
-  this.textEl = document.createElement("div");
-  this.textEl.className = "rubik-glitch-regular";
-  this.textEl.innerText = this.states[this.index];
-
-  this.textWrapper.appendChild(this.textEl);
-  this.el.appendChild(this.textWrapper);
-
-
-  return this.el;
-}
+  this.textWrapper.classList.remove("state-enter");
+  void this.textWrapper.offsetWidth; // reset animation
+  this.textWrapper.classList.add("state-enter");
 }
 
-//
+setImage(img, trigger = true) {
+
+  this.bgLayer.style.backgroundImage = `url(${img})`;
+
+  if (trigger) {
+    triggerGlitch(img);
+  }
+}
+}
+// ==============================
 // INIT
-//
+// ==============================
 
 const container = document.getElementById("panels");
-
-// 🔥 Limpia antes de renderizar
 container.innerHTML = "";
 
 const panels = [];
 
-panelConfig.forEach(config => {
-  const panel = new Panel(config);
+panelConfig.forEach((config, i) => {
+  const panel = new Panel(config.states, i);
   panels.push(panel);
   container.appendChild(panel.render());
 });
-window.onwheel = null;
+// ===== ESTADO INICIAL CORRECTO =====
+const initialStates = panels.map(() => "");
+panels.forEach(p => p.setState(""));
+updatePanelsFromStates(initialStates);
 
-window.addEventListener("wheel", (e) => {
+// ==============================
+// LÓGICA GLOBAL DE IMÁGENES
+// ==============================
 
-  if (e.deltaY > 0) {
-    panels.forEach(panel => panel.next());
+function getImageSet(state) {
+
+  state = state.trim();
+
+  if (state === "") return null;
+
+  if (state === "Arte") return dibuImages;
+  if (state === "Imagen") return tatuImages;
+  if (state === "Multimedia") return fotoImages;
+  if (state === "Diseño") return tatuImages;
+  if (state === "Desarrollo") return tatuImages;
+
+  return null;
+}
+const isTouchDevice =
+  'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+function advancePanels() {
+
+  if (document.body.classList.contains("modal-active")) {
+
+    // solo cambiar imágenes
+    const currentStates = panels.map(p => p.textEl.innerText);
+    updatePanelsFromStates(currentStates);
+
+    return;
   }
 
+  const states = panels.map(p => p.next());
+  panels.forEach((p,i) => p.setState(states[i]));
+  updatePanelsFromStates(states);
+}
+
+function updatePanelsFromStates(statesArray) {
+
+  const cleanedStates = statesArray.map(s => s.trim()).filter(s => s !== "");
+
+  // ===== TODOS VACÍOS =====
+  if (cleanedStates.length === 0) {
+
+    const pools = [dibuImages, tatuImages, fotoImages];
+
+    panels.forEach((panel, i) => {
+
+      const pool = pools[i % pools.length];
+      const randomImg = pool[Math.floor(Math.random() * pool.length)];
+
+      panel.setImage(randomImg, true); // 🔥 SIEMPRE glitch
+
+    });
+
+    return;
+  }
+
+  // ===== STATES ACTIVOS =====
+
+  let combinedPool = [];
+
+  cleanedStates.forEach(state => {
+
+    if (state === "Arte")
+      combinedPool = combinedPool.concat(dibuImages);
+
+    if (state === "Imagen")
+      combinedPool = combinedPool.concat(tatuImages);
+
+    if (state === "Multimedia")
+      combinedPool = combinedPool.concat(fotoImages);
+
+    if (state === "Diseño")
+      combinedPool = combinedPool.concat(tatuImages);
+
+    if (state === "Desarrollo")
+      combinedPool = combinedPool.concat(tatuImages);
+
+  });
+
+  combinedPool = [...new Set(combinedPool)];
+  const shuffled = [...combinedPool].sort(() => 0.5 - Math.random());
+
+  panels.forEach((panel, i) => {
+    panel.setImage(shuffled[i % shuffled.length], true); // 🔥 SIEMPRE glitch
+  });
+
+}
+
+
+
+// ==============================
+// INTERACCIÓN SEGÚN DISPOSITIVO
+// ==============================
+
+// DESKTOP → solo wheel
+if (!isTouchDevice) {
+
+  window.addEventListener("wheel", (e) => {
+    if (e.deltaY > 0) {
+      advancePanels();
+    }
+  });
+
+}
+
+// MOBILE / TOUCH → solo click
+if (isTouchDevice) {
+
+  document.body.addEventListener("touchstart", (e) => {
+
+    if (
+      e.target.closest("header") ||
+      e.target.closest("#modalOverlay") ||
+      e.target.closest(".mobile-menu")
+    ) {
+      return;
+    }
+
+    advancePanels();
+
+  }, { passive: true });
+
+}
+// ==============================
+// IMAGE POOL GLOBAL
+// ==============================
+
+function getAllImagesPool() {
+  return [
+    ...dibuImages,
+    ...tatuImages,
+    ...fotoImages
+  ];
+}
+
+function getRandomImageFromPool() {
+  const pool = getAllImagesPool();
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+
+// ==============================
+// DESKTOP PREVIEW (STABLE CORE)
+// ==============================
+
+if (!isTouchDevice) {
+
+  let preview = document.createElement("img");
+  preview.style.position = "fixed";
+  preview.style.maxWidth = "420px";
+  preview.style.maxHeight = "520px";
+  preview.style.pointerEvents = "none";
+  preview.style.zIndex = "9999";
+  preview.style.boxShadow = "0 25px 60px rgba(0,0,0,0.45)";
+  preview.style.objectFit = "contain";
+  preview.style.display = "none";
+
+  document.body.appendChild(preview);
+
+  let currentX = 0;
+  let currentY = 0;
+  let targetX = 0;
+  let targetY = 0;
+  let previewInterval = null;
+  let isInsidePanels = false;
+
+  let horizontalImages = [];
+  let verticalImages = [];
+  let mode = "horizontal";
+  let counter = 0;
+
+  function getAllImagesPool() {
+    return [
+      ...dibuImages,
+      ...tatuImages,
+      ...fotoImages
+    ];
+  }
+
+  function preloadAndClassify() {
+    getAllImagesPool().forEach(src => {
+      const img = new Image();
+      img.src = src;
+      img.onload = () => {
+        if (img.width >= img.height) {
+          horizontalImages.push(src);
+        } else {
+          verticalImages.push(src);
+        }
+      };
+    });
+  }
+
+  preloadAndClassify();
+
+  function getNextImage() {
+
+    if (counter >= 3) {
+      mode = mode === "horizontal" ? "vertical" : "horizontal";
+      counter = 0;
+    }
+
+    counter++;
+
+    const arr = mode === "horizontal"
+      ? horizontalImages
+      : verticalImages;
+
+    if (!arr.length) return null;
+
+    return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  function animate() {
+    const ease = 0.28;
+
+    currentX += (targetX - currentX) * ease;
+    currentY += (targetY - currentY) * ease;
+
+    preview.style.left = currentX + "px";
+    preview.style.top = currentY + "px";
+
+    requestAnimationFrame(animate);
+  }
+
+  animate(); // 🔥 nunca se detiene
+
+  panels.forEach(panel => {
+
+    panel.el.addEventListener("mouseenter", (e) => {
+
+      isInsidePanels = true;
+
+      const imgSrc = getNextImage();
+      if (imgSrc) preview.src = imgSrc;
+
+      preview.style.display = "block";
+
+      clearInterval(previewInterval);
+      previewInterval = setInterval(() => {
+        const next = getNextImage();
+        if (next) preview.src = next;
+      }, 2200);
+
+    });
+
+    panel.el.addEventListener("mousemove", (e) => {
+
+      const offset = 40;
+
+      let x = e.clientX + offset;
+      let y = e.clientY + offset;
+
+      const rect = preview.getBoundingClientRect();
+
+      const maxX = window.innerWidth - rect.width - 20;
+      const maxY = window.innerHeight - rect.height - 20;
+
+      targetX = Math.min(Math.max(20, x), maxX);
+      targetY = Math.min(Math.max(20, y), maxY);
+
+    });
+
+    panel.el.addEventListener("mouseleave", () => {
+
+      isInsidePanels = false;
+
+      clearInterval(previewInterval);
+
+      setTimeout(() => {
+        if (!isInsidePanels) {
+          preview.style.display = "none";
+        }
+      }, 40);
+
+    });
+
+  });
+
+}
+// ==============================
+// MODAL LOGIC
+// ==============================
+document.querySelectorAll(".menu-item").forEach(item => {
+  item.addEventListener("click", (e) => {
+    e.preventDefault();
+    openModal(item.dataset.key);
+  });
 });
-// Interacción por click para miniatura independiente
-const allImages = panels.flatMap(panel => panel.images); // todas las imágenes de todos los módulos
 
-panels.forEach(panel => {
+const modalOverlay = document.getElementById("modalOverlay");
+const modalBody = document.getElementById("modalBody");
+const modalClose = document.getElementById("modalClose");
 
-  let previewImg;
+const modalContentData = {
+  TATUANDO: `
+    <h2 class="text-5xl mb-6 rubik-glitch-regular tracking-wide" >CAMITATUANDO</h2>
+    <p>Tatuajes en línea negra, sólidos y originales, desde 2021 en @camitatuando</p>
+  `,
+  BIO: `
+    <h2 class="text-5xl mb-6 rubik-glitch-regular tracking-wide">BIO</h2>
+    <p>Formada en bellas artes, fotografía y arte multimedial, me considero una artista visual y digital, interesada en procesos híbridos.</p>
+  `,
+  CV: `
+    <h2 class="text-5xl mb-6 rubik-glitch-regular tracking-wide">CV</h2>
+    <p>Producción audiovisual, comunicación digital y desarrollo web. Contratame! CV aquí</p>
+  `,
+  CONTACTO: `
+    <h2 class=" text-5xl mb-6 rubik-glitch-regular tracking-wide">CONTACTO</h2>
+    <p>camibarbon@gmail.com<br>Celu: 1130933666</p>
+  `
+};
 
-  panel.el.addEventListener("mouseenter", () => {
-    if (!previewImg) {
-      previewImg = document.createElement("img");
-      previewImg.style.position = "absolute";
-      previewImg.style.width = "300px";
-      previewImg.style.height = "auto";
-      previewImg.style.border = "2px solid white";
-      previewImg.style.borderRadius = "4px";
-      previewImg.style.pointerEvents = "none";
-      previewImg.style.zIndex = "9999";
-      previewImg.style.transition = "transform 0.05s ease, opacity 0.2s ease";
-      panel.el.appendChild(previewImg);
-    }
-    // Imagen inicial aleatoria de todas
-    const randomIndex = Math.floor(Math.random() * allImages.length);
-    previewImg.src = allImages[randomIndex];
-    previewImg.style.display = "block";
+function openModal(key) {
+  const mobileMenu = document.getElementById("mobileMenu");
+if (mobileMenu) {
+  mobileMenu.classList.remove("active");
+}
+  document.body.classList.add("modal-active");
+
+  const rawHTML = modalContentData[key];
+  if (!rawHTML) return;
+
+  modalBody.innerHTML = "";
+  modalOverlay.classList.remove("hidden");
+
+  const wrapper = document.createElement("div");
+  wrapper.className = "modal-glitch-wrapper";
+
+  const temp = document.createElement("div");
+  temp.innerHTML = rawHTML;
+
+const elements = Array.from(temp.children);
+
+  elements.forEach((el, index) => {
+
+  const slice = document.createElement("div");
+  slice.className = "modal-slice";
+
+  const lineEl = document.createElement("div");
+
+  if (el.tagName === "H2") {
+    lineEl.className = "modal-line rubik-glitch-regular tracking-wide text-4xl mb-6";
+  } else {
+    lineEl.className = "modal-line modal-classic";
+  }
+
+  lineEl.innerHTML = el.innerHTML;
+
+  slice.appendChild(lineEl);
+  wrapper.appendChild(slice);
+
+  setTimeout(() => {
+    lineEl.classList.add("slice-enter");
+  }, index * 120);
+
+});
+
+  modalBody.appendChild(wrapper);
+}
+function closeModal() {
+  modalOverlay.classList.add("hidden");
+  document.body.classList.remove("modal-active");
+}
+// ABRIR MODAL
+function setupModalTriggers(selector) {
+  document.querySelectorAll(selector).forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      openModal(item.dataset.key);
+    });
   });
+}
 
-  panel.el.addEventListener("mousemove", (e) => {
-    if (previewImg) {
-      const rect = panel.el.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
+setupModalTriggers(".menu-item");
+setupModalTriggers(".mobile-item");
 
-      const imgWidth = 100;
-      const imgHeight = previewImg.naturalHeight / previewImg.naturalWidth * imgWidth;
+// CERRAR MODAL
+modalClose.addEventListener("click", closeModal);
 
-      let offsetX = e.clientX - rect.left + 15; // derecha del cursor
-      let offsetY;
+modalOverlay.addEventListener("click", (e) => {
+  if (e.target === modalOverlay) {
+    closeModal();
+  }
+});
 
-      // Si el mouse está en la parte baja de la pantalla, colocamos la miniatura arriba del cursor
-      if (e.clientY + imgHeight + 15 > viewportHeight) {
-        offsetY = e.clientY - rect.top - imgHeight - 15; // arriba del cursor
-      } else {
-        offsetY = e.clientY - rect.top + 15; // debajo del cursor
-      }
 
-      // Ajuste horizontal para que no se salga del viewport
-      if (e.clientX + imgWidth + 15 > viewportWidth) {
-        offsetX -= (e.clientX + imgWidth + 15 - viewportWidth);
-      }
+const menuToggle = document.getElementById("menuToggle");
+const mobileMenu = document.getElementById("mobileMenu");
 
-      previewImg.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-    }
+menuToggle.addEventListener("click", (e) => {
+  e.stopPropagation();
+  mobileMenu.classList.toggle("active");
+});
+
+// cerrar al tocar item
+document.querySelectorAll(".mobile-item").forEach(link => {
+  link.addEventListener("click", () => {
+    mobileMenu.classList.remove("active");
   });
-
-  panel.el.addEventListener("mouseleave", () => {
-    if (previewImg) previewImg.style.display = "none";
-  });
-
-  panel.el.addEventListener("click", () => {
-    if (previewImg) {
-      const randomIndex = Math.floor(Math.random() * allImages.length);
-      previewImg.src = allImages[randomIndex];
-    }
-  });
-
 });
 </script>
 
