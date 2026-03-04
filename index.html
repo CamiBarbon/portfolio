@@ -12,43 +12,14 @@
 <style>
   html { font-family: "Segoe UI", system-ui, -apple-system, sans-serif;}
   body { margin: 0; overflow: hidden; }
-  .site-title {
-  position: fixed;
-  bottom: -10px;
-  left: 30px;
-  font-size: clamp(6rem, 18vw, 18rem);
-  line-height: 0.8;
-  color: white;
-  opacity: 0.08;
-  z-index: 1000;
-  pointer-events: none;
-  letter-spacing: 0.05em;
-  }
+
   .menu-item {
   position: relative;
   opacity: 0.8;
   transition: all 0.3s ease;
 }
 
-.menu-item:hover {
-  opacity: 1;
-  transform: translateY(-2px);
-}
 
-.menu-item::after {
-  content: "";
-  position: absolute;
-  bottom: -6px;
-  left: 0;
-  width: 0%;
-  height: 2px;
-  background: white;
-  transition: width 0.3s ease;
-}
-
-.menu-item:hover::after {
-  width: 100%;
-}
   .rubik-glitch-regular {
     font-family: "Rubik Glitch", system-ui;
     font-weight: 400;
@@ -66,6 +37,7 @@
   position: relative;
   cursor: pointer;
   overflow: visible;
+  transition: transform 0.6s ease;
 }
 
   .bg-layer {
@@ -125,21 +97,21 @@
   bottom: 100px;
   left: 100px;
   right: 100px;
-  border-radius: 2rem;
   background: rgba(0,0,0,0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-
   z-index: 2000;
   overflow: hidden;
 }
 .modal-content {
   position: relative;
+  text-align: center;
   width: min(900px, 90%);
   max-height: 80vh;
   color: white;
-  padding: 0;
+  padding: 40px;
+  border-radius: 2rem;
 }
 
 .modal-slice {
@@ -151,93 +123,81 @@
   pointer-events: none;
 }
 
-.modal-line.rubik-glitch-regular {
-  font-size: clamp(1.8rem, 4vw, 2.8rem);
-}
 .modal-line {
-font-size: clamp(1rem, 3vw, 2rem);
-  line-height: 1.6;
-  opacity: 0;
-  position: relative;
+  text-align: center;
+  font-size: clamp(1rem, 3vw, 2rem);
 }
 
-.slice-enter {
-  animation: glitchIn 0.7s steps(8) forwards;
-}
 
-@keyframes glitchIn {
-
-  0% {
-    opacity: 0;
-    transform: translateY(30px);
-    filter: blur(4px) contrast(2);
-  }
-
-  20% {
-    opacity: 1;
-    transform: translateY(-10px);
-    filter: blur(2px) contrast(3);
-  }
-
-  40% {
-    transform: translateY(6px);
-    filter: blur(1px) hue-rotate(20deg);
-  }
-
-  60% {
-    transform: translateY(-3px);
-    filter: contrast(2) hue-rotate(-20deg);
-  }
-
-  80% {
-    transform: translateY(2px);
-    filter: none;
-  }
-
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-    filter: none;
-  }
-}
-
-@keyframes sliceEnter {
-  0% {
-    transform: translateX(var(--offset));
-    opacity: 0;
-  }
-  60% {
-    transform: translateX(-10px);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
 .modal-active .panel::after {
   background: rgba(0,0,0,0.6);
 }
-.modal-classic {
-  font-weight: 800;
-  letter-spacing: 0.02em;
-}
-.modal-close {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  font-size: 3rem;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  z-index: 10;
+:root {
+  --modal-radius: 2rem;
 }
 
+.modal-close {
+  position: absolute;
+
+  top: calc(var(--modal-radius) / 2);
+  right: calc(var(--modal-radius) / 2);
+
+  font-size: 1.6rem;
+  line-height: 1;
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  cursor: pointer;
+
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.rgb-split {
+  position: relative;
+  display: inline-block;
+}
+
+.rgb-split::before,
+.rgb-split::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rgb-split::before {
+  color: rgb(40, 168, 151);
+  transform: translateX(-3px);
+}
+
+.rgb-split::after {
+  color: rgb(141, 33, 230);
+  transform: translateX(3px);
+}
+
+.rgb-active::before,
+.rgb-active::after {
+  opacity: 0.7;
+  animation: rgbShift 0.4s ease-out forwards;
+}
+
+@keyframes rgbShift {
+  0% { transform: translateX(-6px); }
+  50% { transform: translateX(4px); }
+  100% { transform: translateX(0); opacity: 0; }
+}
 .modal-close:hover {
   transform: rotate(90deg);
 }
 .modal-active .panel {
-  transform: scale(1.03); /* ya arranca ampliado */
-  animation: subtleDrift 6s ease-in-out infinite alternate;
+  animation: subtleDrift 9s ease-in-out infinite alternate;
 }
 
 @keyframes subtleDrift {
@@ -247,12 +207,7 @@ font-size: clamp(1rem, 3vw, 2rem);
 .hidden {
   display: none;
 }
-.modal-glitch-wrapper {
-  position: relative;
-  width: min(900px, 90%);
-  margin: auto;
-  padding: 100px 40px;
-}
+
 .scroll-indicator {
   position: fixed;
   left: 50%;
@@ -308,53 +263,7 @@ font-size: clamp(1rem, 3vw, 2rem);
   font-size: 2rem;
   padding-right: 2rem;
 }
-
-/* MOBILE NAV */
-@media (max-width: 768px) {
-  header {
-    justify-content: space-between;
-  }
-.modal-active .panel {
-  transform: scale(1.03); /* ya arranca ampliado */
-  animation: subtleDrift 6s ease-in-out infinite alternate;
-}
-.modal-content {
-    width: calc(100vw - 40px);
-    height: auto;
-    max-height: 85vh;
-    padding: 40px 25px;
-  }
-
-  .modal-close {
-    top: 15px;
-    right: 15px;
-    font-size: 2.2rem;
-  }
-@keyframes subtleDrift {
-  from { transform: scale(1.03); }
-  to   { transform: scale(1.06); }
-}
-.modal-overlay {
-    top: 40px;
-    bottom: 40px;
-    left: 20px;
-    right: 20px;
-  }
-
-  .modal-content {
-    width: 100%;
-    max-height: 85vh;
-  }
-
-  .modal-line {
-    font-size: 0.95rem;
-    line-height: 1.5;
-  }
-
-  .modal-line.rubik-glitch-regular {
-    font-size: 1.6rem;
-  }
-  @media (min-width: 768px) {
+@media (min-width: 768px) {
 
   .menu-item {
     position: relative;
@@ -374,12 +283,12 @@ font-size: clamp(1rem, 3vw, 2rem);
   }
 
   .menu-item::before {
-    color: red;
+    color: rgb(0, 60, 255);
     transform: translateX(-2px);
   }
 
   .menu-item::after {
-    color: cyan;
+    color: rgb(236, 87, 157);
     transform: translateX(2px);
   }
 
@@ -394,6 +303,59 @@ font-size: clamp(1rem, 3vw, 2rem);
   }
 
 }
+/* MOBILE NAV */
+@media (max-width: 768px) {
+  header {
+    justify-content: space-between;
+  }
+
+.modal-content {
+  text-align: center;
+  width: 100%;
+  height: calc(100vh - 80px);
+  max-height: none;
+  border-radius: 0;
+  padding: 60px 25px 40px 25px;
+}
+
+  .modal-close {
+  top: 20px;
+  right: 20px;
+  font-size: 22px;
+}
+.modal-overlay {
+  top: 80px;   /* respeta el header */
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.modal-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: overlay;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.07) 0px,
+      rgba(0,0,0,0.15) 2px
+    );
+}
+
+.modal-overlay.crt::before {
+  animation: crtFlash 0.7s ease-out forwards;
+}
+
+@keyframes crtFlash {
+  0%   { opacity: 0.9; }
+  40%  { opacity: 0.5; }
+  100% { opacity: 0; }
+}
+
+
 
 @keyframes navRGBGlitch {
   0%   { transform: translateX(-2px); }
@@ -410,7 +372,7 @@ font-size: clamp(1rem, 3vw, 2rem);
 <header class="fixed top-0 left-0 w-full h-[80px] flex items-center justify-between px-8 z-[3000] bg-transparent">
 
   <div class="tracking-wide text-white rubik-glitch-regular text-2xl md:text-4xl px-[6%]">
-   <a href="index.html">CAMILA BARBON</a>  
+         <a  class="menu-item" href="index.html">CAMI BARBON</a>   
   </div>
 <button id="menuToggle" class="md:hidden text-white text-4xl z-[4000]">
   ☰
@@ -463,26 +425,34 @@ document.querySelectorAll(".menu-item").forEach(el => {
   el.setAttribute("data-text", el.innerText);
 });
 // ==============================
-// GLITCH SUAVE (no invade menú)
+// GLITCH 
 // ==============================
+let glitchContainer = null;
 
 function triggerGlitch(imageUrl) {
 
-  const glitchContainer = document.createElement("div");
-  glitchContainer.style.position = "fixed";
-  glitchContainer.style.inset = "0";
-  glitchContainer.style.pointerEvents = "none";
-  glitchContainer.style.zIndex = "4";
-  glitchContainer.style.overflow = "hidden";
+  // detectar dispositivo pesado
+  const isTouch =
+    'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
-  const mode = Math.floor(Math.random() * 4); 
-  // 0 = negativo
-  // 1 = RGB split fuerte
-  // 2 = tele vieja (scanline + contraste)
-  // 3 = distorsión brutal horizontal
-
-  const slices = 12 + Math.floor(Math.random() * 10);
+  // menos slices solo en touch (desktop queda igual)
+  const slices = isTouch ? 10 : (12 + Math.floor(Math.random() * 10));
   const sliceHeight = window.innerHeight / slices;
+
+  // reutilizar contenedor si existe
+  if (!glitchContainer) {
+    glitchContainer = document.createElement("div");
+    glitchContainer.style.position = "fixed";
+    glitchContainer.style.inset = "0";
+    glitchContainer.style.pointerEvents = "none";
+    glitchContainer.style.zIndex = "4";
+    glitchContainer.style.overflow = "hidden";
+    document.body.appendChild(glitchContainer);
+  }
+
+  glitchContainer.innerHTML = ""; // limpiar sin destruir nodo
+
+  const mode = Math.floor(Math.random() * 4);
 
   for (let i = 0; i < slices; i++) {
 
@@ -504,53 +474,37 @@ function triggerGlitch(imageUrl) {
     layer.style.backgroundSize = "cover";
     layer.style.backgroundPosition = "center";
 
-    let offset = (Math.random() - 0.5) * 80;
+    // 🔥 CLAVE PERFORMANCE
+    layer.style.willChange = "transform, opacity, filter";
+    layer.style.backfaceVisibility = "hidden";
 
-    // ===== MODOS VISUALES =====
+    let offset = (Math.random() - 0.5) * 60; // antes 80
 
     if (mode === 0) {
-      // NEGATIVO
-      layer.style.filter = `
-        invert(1)
-        contrast(1.4)
-        brightness(1.2)
-      `;
+      layer.style.filter = `invert(1) contrast(1.4) brightness(1.2)`;
     }
 
     if (mode === 1) {
-      // RGB SPLIT FUERTE
-      layer.style.filter = `
-        contrast(1.3)
-        hue-rotate(${Math.random()*360}deg)
-      `;
-      layer.style.mixBlendMode = "screen";
+      layer.style.filter = `contrast(1.3) hue-rotate(${Math.random()*360}deg)`;
     }
 
     if (mode === 2) {
-      // TELE VIEJA
-      layer.style.filter = `
-        grayscale(0.4)
-        contrast(1.8)
-        brightness(0.9)
-      `;
+      layer.style.filter = `grayscale(0.4) contrast(1.8) brightness(0.9)`;
     }
 
     if (mode === 3) {
-      // DISTORSIÓN HORIZONTAL
-      layer.style.filter = `
-        contrast(1.6)
-        saturate(0.6)
-      `;
-      offset *= 1.5;
+      layer.style.filter = `contrast(1.6) saturate(0.6)`;
+      offset *= 1.3; // antes 1.5
     }
 
-    layer.style.transform = `translateX(${offset}px)`;
+    layer.style.transform = `translate3d(${offset}px,0,0)`;
 
     slice.appendChild(layer);
     glitchContainer.appendChild(slice);
 
     setTimeout(() => {
-      layer.style.transform = `translateX(${(Math.random() - 0.5) * 40}px)`;
+      layer.style.transform =
+        `translate3d(${(Math.random() - 0.5) * 30}px,0,0)`;
       layer.style.opacity = Math.random() * 0.8 + 0.2;
     }, 40 + i * 10);
 
@@ -559,24 +513,10 @@ function triggerGlitch(imageUrl) {
     }, 200 + i * 20);
   }
 
-  // ===== SCANLINE CRT (solo algunos modos) =====
-  if (mode === 2 || Math.random() > 0.6) {
-    const noise = document.createElement("div");
-    noise.style.position = "absolute";
-    noise.style.inset = "0";
-    noise.style.background =
-      "repeating-linear-gradient(to bottom, rgba(255,255,255,0.05) 0px, rgba(0,0,0,0.1) 2px)";
-    noise.style.mixBlendMode = "overlay";
-    glitchContainer.appendChild(noise);
-  }
-
-  document.body.appendChild(glitchContainer);
-
   setTimeout(() => {
-    glitchContainer.remove();
-  }, 500);
+    glitchContainer.innerHTML = "";
+  }, 520);
 }
-
 // ==============================
 // PANEL CLASS
 // ==============================
@@ -655,28 +595,10 @@ panelConfig.forEach((config, i) => {
   container.appendChild(panel.render());
 });
 // ===== ESTADO INICIAL CORRECTO =====
-const initialStates = panels.map(() => "");
 panels.forEach(p => p.setState(""));
-updatePanelsFromStates(initialStates);
+updatePanelsFromStates([]);
 
-// ==============================
-// LÓGICA GLOBAL DE IMÁGENES
-// ==============================
 
-function getImageSet(state) {
-
-  state = state.trim();
-
-  if (state === "") return null;
-
-  if (state === "Arte") return dibuImages;
-  if (state === "Imagen") return tatuImages;
-  if (state === "Multimedia") return fotoImages;
-  if (state === "Diseño") return tatuImages;
-  if (state === "Desarrollo") return tatuImages;
-
-  return null;
-}
 const isTouchDevice =
   'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
@@ -745,6 +667,7 @@ function updatePanelsFromStates(statesArray) {
 
   panels.forEach((panel, i) => {
     panel.setImage(shuffled[i % shuffled.length], true); // 🔥 SIEMPRE glitch
+    if (!shuffled.length) return;
   });
 
 }
@@ -796,22 +719,16 @@ function getAllImagesPool() {
   ];
 }
 
-function getRandomImageFromPool() {
-  const pool = getAllImagesPool();
-  return pool[Math.floor(Math.random() * pool.length)];
-}
-
-
 // ==============================
 // DESKTOP PREVIEW (STABLE CORE)
 // ==============================
 
-if (!isTouchDevice) {
+if (window.innerWidth >= 768) {
 
   let preview = document.createElement("img");
   preview.style.position = "fixed";
-  preview.style.maxWidth = "420px";
-  preview.style.maxHeight = "520px";
+  preview.style.maxWidth = "28vw";
+  preview.style.maxHeight = "60vh";
   preview.style.pointerEvents = "none";
   preview.style.zIndex = "9999";
   preview.style.boxShadow = "0 25px 60px rgba(0,0,0,0.45)";
@@ -831,14 +748,6 @@ if (!isTouchDevice) {
   let verticalImages = [];
   let mode = "horizontal";
   let counter = 0;
-
-  function getAllImagesPool() {
-    return [
-      ...dibuImages,
-      ...tatuImages,
-      ...fotoImages
-    ];
-  }
 
   function preloadAndClassify() {
     getAllImagesPool().forEach(src => {
@@ -891,7 +800,7 @@ if (!isTouchDevice) {
   panels.forEach(panel => {
 
     panel.el.addEventListener("mouseenter", (e) => {
-
+ if (document.body.classList.contains("modal-active")) return;
       isInsidePanels = true;
 
       const imgSrc = getNextImage();
@@ -908,7 +817,7 @@ if (!isTouchDevice) {
     });
 
     panel.el.addEventListener("mousemove", (e) => {
-
+if (document.body.classList.contains("modal-active")) return;
       const offset = 40;
 
       let x = e.clientX + offset;
@@ -944,12 +853,7 @@ if (!isTouchDevice) {
 // ==============================
 // MODAL LOGIC
 // ==============================
-document.querySelectorAll(".menu-item").forEach(item => {
-  item.addEventListener("click", (e) => {
-    e.preventDefault();
-    openModal(item.dataset.key);
-  });
-});
+
 
 const modalOverlay = document.getElementById("modalOverlay");
 const modalBody = document.getElementById("modalBody");
@@ -965,7 +869,7 @@ const modalContentData = {
   `,
   BIO: `
     <h2 class="text-5xl mb-6 rubik-glitch-regular tracking-wide">BIO</h2>
-    <p>Formada en bellas artes, fotografía y arte multimedial, me considero una artista visual y digital, interesada en procesos híbridos.</p>
+    <p>Formada en bellas artes, fotografía y arte multimedial, soy una artista visual-digital interesada en procesos híbridos.</p>
   `,
   CV: `
     <h2 class="text-5xl mb-6 rubik-glitch-regular tracking-wide">CV</h2>
@@ -992,7 +896,16 @@ if (mobileMenu) {
   if (!rawHTML) return;
 
   modalBody.innerHTML = "";
-  modalOverlay.classList.remove("hidden");
+modalOverlay.classList.remove("hidden");
+
+requestAnimationFrame(() => {
+  modalOverlay.classList.add("active");
+  modalOverlay.classList.add("crt");
+});
+
+setTimeout(() => {
+  modalOverlay.classList.remove("crt");
+}, 700);
 
   const wrapper = document.createElement("div");
   wrapper.className = "modal-glitch-wrapper";
@@ -1007,21 +920,26 @@ const elements = Array.from(temp.children);
   const slice = document.createElement("div");
   slice.className = "modal-slice";
 
-  const lineEl = document.createElement("div");
+const lineEl = document.createElement("div");
 
-  if (el.tagName === "H2") {
-    lineEl.className = "modal-line rubik-glitch-regular tracking-wide text-4xl mb-6";
-  } else {
-    lineEl.className = "modal-line modal-classic";
-  }
+if (el.tagName === "H2") {
+  lineEl.className =
+    "modal-line rubik-glitch-regular tracking-wide text-4xl mb-6 rgb-split";
+  lineEl.setAttribute("data-text", el.textContent);
+} else {
+  lineEl.className = "modal-line";
+}
 
+setTimeout(() => {
+  lineEl.classList.add("rgb-active");
+}, index * 120);
   lineEl.innerHTML = el.innerHTML;
 
   slice.appendChild(lineEl);
   wrapper.appendChild(slice);
 
   setTimeout(() => {
-    lineEl.classList.add("slice-enter");
+    lineEl.classList.add("state-center");
   }, index * 120);
 
 });
@@ -1029,8 +947,13 @@ const elements = Array.from(temp.children);
   modalBody.appendChild(wrapper);
 }
 function closeModal() {
-  modalOverlay.classList.add("hidden");
-  document.body.classList.remove("modal-active");
+
+  modalOverlay.classList.remove("active");
+
+  setTimeout(() => {
+    modalOverlay.classList.add("hidden");
+    document.body.classList.remove("modal-active");
+  }, 400);
 }
 // ABRIR MODAL
 function setupModalTriggers(selector) {
@@ -1056,7 +979,6 @@ modalOverlay.addEventListener("click", (e) => {
 
 
 const menuToggle = document.getElementById("menuToggle");
-const mobileMenu = document.getElementById("mobileMenu");
 
 menuToggle.addEventListener("click", (e) => {
   e.stopPropagation();
