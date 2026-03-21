@@ -225,7 +225,7 @@
 }
 /* cuando hay modal */
 .modal-active .scroll-indicator {
-  opacity: 0.2;
+  opacity: 0;
 }
 
 @keyframes bounceArrow {
@@ -583,6 +583,8 @@ setImage(img, trigger = true) {
 // ==============================
 // INIT
 // ==============================
+const isTouchDevice =
+  'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 const container = document.getElementById("panels");
 container.innerHTML = "";
@@ -594,13 +596,52 @@ panelConfig.forEach((config, i) => {
   panels.push(panel);
   container.appendChild(panel.render());
 });
+if (isTouchDevice) {
+
+  panels.forEach((panel, index) => {
+
+    panel.el.addEventListener("touchstart", (e) => {
+
+      if (
+        document.body.classList.contains("modal-active") ||
+        e.target.closest("header") ||
+        e.target.closest("#modalOverlay")
+      ) return;
+
+      const newState = panel.next();
+panel.setState(newState);
+
+// 🔥 SOLO ESTE PANEL cambia imagen
+let pool = [];
+
+if (newState === "Arte") pool = dibuImages;
+if (newState === "Imagen") pool = tatuImages;
+if (newState === "Multimedia") pool = fotoImages;
+if (newState === "Diseño") pool = tatuImages;
+if (newState === "Desarrollo") pool = tatuImages;
+
+// fallback si está vacío
+if (!pool.length) {
+  pool = [
+    ...dibuImages,
+    ...tatuImages,
+    ...fotoImages
+  ];
+}
+
+const randomImg = pool[Math.floor(Math.random() * pool.length)];
+panel.setImage(randomImg, true);
+
+    }, { passive: true });
+
+  });
+
+}
 // ===== ESTADO INICIAL CORRECTO =====
 panels.forEach(p => p.setState(""));
 updatePanelsFromStates([]);
 
 
-const isTouchDevice =
-  'ontouchstart' in window || navigator.maxTouchPoints > 0;
 
 function advancePanels() {
 
@@ -665,14 +706,24 @@ function updatePanelsFromStates(statesArray) {
   combinedPool = [...new Set(combinedPool)];
   const shuffled = [...combinedPool].sort(() => 0.5 - Math.random());
 
-  panels.forEach((panel, i) => {
-    panel.setImage(shuffled[i % shuffled.length], true); // 🔥 SIEMPRE glitch
-    if (!shuffled.length) return;
-  });
+if (!shuffled.length) return;
+
+panels.forEach((panel, i) => {
+  panel.setImage(shuffled[i % shuffled.length], true);
+});
 
 }
 
+// ===== ESTADO INICIAL =====
+panels.forEach(p => p.setState(""));
 
+updatePanelsFromStates([]);
+
+// 🔥 FORZAR GLITCH AL CARGAR
+setTimeout(() => {
+  const states = panels.map(p => p.textEl.innerText);
+  updatePanelsFromStates(states);
+}, 100);
 
 // ==============================
 // INTERACCIÓN SEGÚN DISPOSITIVO
@@ -689,24 +740,7 @@ if (!isTouchDevice) {
 
 }
 
-// MOBILE / TOUCH → solo click
-if (isTouchDevice) {
 
-  document.body.addEventListener("touchstart", (e) => {
-
-    if (
-      e.target.closest("header") ||
-      e.target.closest("#modalOverlay") ||
-      e.target.closest(".mobile-menu")
-    ) {
-      return;
-    }
-
-    advancePanels();
-
-  }, { passive: true });
-
-}
 // ==============================
 // IMAGE POOL GLOBAL
 // ==============================
