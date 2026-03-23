@@ -240,29 +240,68 @@
   top: 80px;
   left: 0;
   width: 100%;
+
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   gap: 25px;
-  background: transparent;
-  backdrop-filter: none;
+
+  padding: 20px 0;
+
+  /* 🔥 GLASS REAL */
+  background: rgba(20, 20, 20, 0.35);
+  backdrop-filter: blur(25px) saturate(160%);
+  -webkit-backdrop-filter: blur(25px) saturate(160%);
+
+  /* ✨ brillo vidrio */
+  border-top: 1px solid rgba(255,255,255,0.15);
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.35),
+    inset 0 1px rgba(255,255,255,0.08);
+
+  /* 🎬 animación */
+  transform: translateY(-20px) scale(0.98);
+  opacity: 0;
 
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.4s cubic-bezier(.22,.8,.2,1);
-  z-index: 3500;
+
+  transition:
+    max-height 0.5s cubic-bezier(.22,.8,.2,1),
+    transform 0.45s cubic-bezier(.22,.8,.2,1),
+    opacity 0.35s ease;
+
+  z-index: 1500;
 }
 
 .mobile-menu.active {
-  max-height: 400px;
+  max-height: 420px;
+  transform: translateY(0) scale(1);
+  opacity: 1;
 }
 
 .mobile-item {
-  color: white;
+  position: relative;
+  z-index: 2;
+  color: rgb(255, 255, 255);
   font-family: "Rubik Glitch", system-ui;
   font-size: 2rem;
   padding-right: 2rem;
 }
+.mobile-menu::before {
+  z-index: 0;
+  content: "";
+  position: absolute;
+  inset: 0;
+
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+
+  background: rgba(20, 0, 40, 0.25);
+
+  pointer-events: none;
+}
+
 @media (min-width: 768px) {
 
   .menu-item {
@@ -308,6 +347,15 @@
   header {
     justify-content: space-between;
   }
+  /* links NO visitados */
+.mobile-item:link {
+  color: rgb(255, 255, 255); /* violeta */
+}
+
+/* links visitados */
+.mobile-item:visited {
+  color: rgb(184, 158, 255);
+}
 
 .modal-content {
   text-align: center;
@@ -372,7 +420,7 @@
 <header class="fixed top-0 left-0 w-full h-[80px] flex items-center justify-between px-8 z-[3000] bg-transparent">
 
   <div class="tracking-wide text-white rubik-glitch-regular text-2xl md:text-4xl px-[6%]">
-         <a  class="menu-item" href="https://camibarbon.github.io/portfolio/">CAMI BARBON</a>   
+         <a class="menu-item no-modal" href="https://camibarbon.github.io/portfolio/">CAMI BARBON</a>   
   </div>
 <button id="menuToggle" class="md:hidden text-white text-4xl z-[4000]">
   ☰
@@ -629,19 +677,24 @@ if (!pool.length) {
   ];
 }
 
-const randomImg = pool[Math.floor(Math.random() * pool.length)];
-panel.setImage(randomImg, true);
+// busca img ya usadas en otros paneles
+const usedImages = panels
+  .map(p => p.bgLayer.style.backgroundImage)
+  .map(bg => bg.replace(/^url\(["']?/, '').replace(/["']?\)$/, ''));
 
-    }, { passive: true });
+// ❌ filtrar repetidas
+let available = pool.filter(img => !usedImages.includes(img));
 
-  });
-
+// fallback si se queda sin opciones
+if (!available.length) {
+  available = pool;
 }
-// ===== ESTADO INICIAL CORRECTO =====
-panels.forEach(p => p.setState(""));
-updatePanelsFromStates([]);
 
-
+const randomImg = available[Math.floor(Math.random() * available.length)];
+panel.setImage(randomImg, true);
+  }); 
+  });  
+}       
 
 function advancePanels() {
 
@@ -757,7 +810,7 @@ function getAllImagesPool() {
 // DESKTOP PREVIEW (STABLE CORE)
 // ==============================
 
-if (window.innerWidth >= 768) {
+if (!isTouchDevice) {
 
   let preview = document.createElement("img");
   preview.style.position = "fixed";
@@ -920,6 +973,7 @@ const modalContentData = {
 };
 
 function openModal(key) {
+  if (!key || !modalContentData[key]) return; //  evita modal vacío
   const mobileMenu = document.getElementById("mobileMenu");
 if (mobileMenu) {
   mobileMenu.classList.remove("active");
